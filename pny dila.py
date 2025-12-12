@@ -35,6 +35,7 @@ st.markdown(
         border-radius: 12px;
         box-shadow: 0 4px 18px rgba(0,0,0,0.04);
         margin-bottom: 16px;
+        color: {TEXT_PRIMARY}; /* ensure text inside card is dark and readable */
     }}
     /* headings */
     .header-title {{
@@ -50,6 +51,10 @@ st.markdown(
         margin-top: 4px;
         margin-bottom: 0;
         font-size: 14px;
+    }}
+    /* Ensure subheaders inside cards are visible */
+    .card h2, .card h3, .card .stMarkdown h2, .card .stMarkdown h3, .card .css-1v0mbdj h2 {{
+        color: {TEXT_PRIMARY} !important;
     }}
     /* global buttons */
     .stButton>button, .stDownloadButton>button {{
@@ -71,6 +76,7 @@ st.markdown(
     input[type="text"], input[type="number"], .stTextArea textarea {{
         border-radius: 8px;
         padding: 8px;
+        color: {TEXT_PRIMARY};
     }}
     /* smaller muted text */
     .muted {{
@@ -81,6 +87,10 @@ st.markdown(
     .stDataFrame table {{
         border-radius: 8px;
         overflow: hidden;
+    }}
+    /* ensure labels & form text visible */
+    label, .stTextInput>div>input, .stSelectbox>div, .stNumberInput>div {{
+        color: {TEXT_PRIMARY};
     }}
     </style>
     """,
@@ -174,7 +184,6 @@ else:
         st.markdown('<p class="header-title">Manajemen Data Mahasiswa</p>', unsafe_allow_html=True)
         st.markdown(f'<p class="header-sub">Login sebagai: <strong>{st.session_state.get("username")}</strong></p>', unsafe_allow_html=True)
     with logout_col:
-        # We add wrapper div so logout button gets styled differently via CSS selector
         st.markdown('<div class="logout-col">', unsafe_allow_html=True)
         if st.button("Logout"):
             logout()
