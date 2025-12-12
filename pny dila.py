@@ -13,7 +13,7 @@ CREDENTIALS = {"dilah": "april"}  # demo credentials
 PAGE_BG = "#FFF6FA"       # very light pink background
 CARD_BG = "#FFEAF2"       # card background
 PRIMARY = "#FF6FA3"       # main button color (soft hot-pink)
-ACCENT = "#FF85B9"        # accent
+ACCENT = "#FF85B9"        # accent (dipakai untuk judul card agar terlihat)
 LOGOUT_BG = "#FF7F50"     # logout (coral-ish)
 TEXT_PRIMARY = "#333333"
 
@@ -35,7 +35,6 @@ st.markdown(
         border-radius: 12px;
         box-shadow: 0 4px 18px rgba(0,0,0,0.04);
         margin-bottom: 16px;
-        color: {TEXT_PRIMARY}; /* ensure text inside card is dark and readable */
     }}
     /* headings */
     .header-title {{
@@ -52,9 +51,13 @@ st.markdown(
         margin-bottom: 0;
         font-size: 14px;
     }}
-    /* Ensure subheaders inside cards are visible */
-    .card h2, .card h3, .card .stMarkdown h2, .card .stMarkdown h3, .card .css-1v0mbdj h2 {{
-        color: {TEXT_PRIMARY} !important;
+    /* card title (replaces subheader) */
+    .card-title {{
+        color: {ACCENT};
+        font-family: 'Helvetica', Arial, sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
     }}
     /* global buttons */
     .stButton>button, .stDownloadButton>button {{
@@ -76,7 +79,6 @@ st.markdown(
     input[type="text"], input[type="number"], .stTextArea textarea {{
         border-radius: 8px;
         padding: 8px;
-        color: {TEXT_PRIMARY};
     }}
     /* smaller muted text */
     .muted {{
@@ -87,10 +89,6 @@ st.markdown(
     .stDataFrame table {{
         border-radius: 8px;
         overflow: hidden;
-    }}
-    /* ensure labels & form text visible */
-    label, .stTextInput>div>input, .stSelectbox>div, .stNumberInput>div {{
-        color: {TEXT_PRIMARY};
     }}
     </style>
     """,
@@ -184,6 +182,7 @@ else:
         st.markdown('<p class="header-title">Manajemen Data Mahasiswa</p>', unsafe_allow_html=True)
         st.markdown(f'<p class="header-sub">Login sebagai: <strong>{st.session_state.get("username")}</strong></p>', unsafe_allow_html=True)
     with logout_col:
+        # We add wrapper div so logout button gets styled differently via CSS selector
         st.markdown('<div class="logout-col">', unsafe_allow_html=True)
         if st.button("Logout"):
             logout()
@@ -200,7 +199,8 @@ else:
 
     with left:
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("Tambah Data")
+        # Use styled card-title (visible, non-white)
+        st.markdown('<p class="card-title">Tambah Data</p>', unsafe_allow_html=True)
         with st.form("tambah"):
             nim = st.text_input("NIM (12 digit)", placeholder="Contoh: 200300400500")
             nama = st.text_input("Nama", placeholder="Contoh: Siti Aminah")
@@ -236,7 +236,7 @@ else:
 
         # Edit / Hapus (card)
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("Edit Data")
+        st.markdown('<p class="card-title">Edit Data</p>', unsafe_allow_html=True)
         nim_list = df["NIM"].astype(str).tolist()
         if nim_list:
             nim_pilih = st.selectbox("Pilih NIM untuk edit", [""] + nim_list)
@@ -273,7 +273,7 @@ else:
 
     with right:
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("Data Mahasiswa")
+        st.markdown('<p class="card-title">Data Mahasiswa</p>', unsafe_allow_html=True)
         st.markdown('<p class="muted">Filter, urutkan, dan unduh data CSV.</p>', unsafe_allow_html=True)
 
         # Filter & sorting controls
