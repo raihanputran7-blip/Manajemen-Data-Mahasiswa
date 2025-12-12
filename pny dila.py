@@ -7,6 +7,20 @@ DATA_FILE = "data_mahasiswa.csv"
 CREDENTIALS = {"dilah": "april"}  # demo credentials
 
 # -----------------------
+# Safe rerun helper
+# -----------------------
+def safe_rerun():
+    """
+    Try to call st.experimental_rerun(); if it's not available or fails,
+    flip a session flag and stop the script to produce a UI refresh-like effect.
+    """
+    try:
+        st.experimental_rerun()
+    except Exception:
+        st.session_state['_refresh_flag'] = not st.session_state.get('_refresh_flag', False)
+        st.stop()
+
+# -----------------------
 # Utility: baca / simpan
 # -----------------------
 def ensure_file():
@@ -58,6 +72,10 @@ if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
     st.session_state['username'] = ""
 
+# small flag used by safe_rerun fallback to trigger a rerun-like behavior
+if '_refresh_flag' not in st.session_state:
+    st.session_state['_refresh_flag'] = False
+
 st.set_page_config(page_title="Manajemen Data Mahasiswa", layout="wide")
 
 # -----------------------
@@ -74,7 +92,7 @@ if not st.session_state['logged_in']:
                 st.session_state['logged_in'] = True
                 st.session_state['username'] = username.strip()
                 st.success(f"Login berhasil. Selamat datang, {username.strip()}!")
-                st.experimental_rerun()
+                safe_rerun()
             else:
                 st.error("Username atau password salah.")
     st.info("Coba username: dilah dan password: april (demo).")
@@ -87,7 +105,7 @@ else:
     with col2:
         if st.button("Logout"):
             logout()
-            st.experimental_rerun()
+            safe_rerun()
 
     # Load data
     df = read_data()
@@ -127,7 +145,7 @@ else:
                     df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
                     save_data(df)
                     st.success("Data berhasil ditambahkan.")
-                    st.experimental_rerun()
+                    safe_rerun()
 
         st.markdown("---")
         st.subheader("Edit / Hapus Data")
@@ -155,12 +173,12 @@ else:
                             ]
                             save_data(df)
                             st.success("Data berhasil diperbarui.")
-                            st.experimental_rerun()
+                            safe_rerun()
                     if do_delete:
                         df = df[df["NIM"].astype(str) != nim_pilih].reset_index(drop=True)
                         save_data(df)
                         st.success("Data berhasil dihapus.")
-                        st.experimental_rerun()
+                        safe_rerun()
         else:
             st.info("Belum ada data untuk diedit atau dihapus.")
 
